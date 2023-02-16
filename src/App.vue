@@ -2,6 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div>{{ $store.state.count }}</div>
   </div>
 </template>
 
@@ -12,6 +13,10 @@ export default {
   name: 'App',
   components: {
     HelloWorld
+  },
+  
+  mounted() {
+    console.log(this.$store.getters.pacientes.count())  
   }
 }
 </script>
