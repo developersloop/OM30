@@ -154,6 +154,7 @@ export default {
             font-size: 19px;
             line-height: 23px;
             margin-top: 1rem;
+            cursor: pointer;
 
             @media (min-width:  601px) and (max-width: 1200px){ width: 294px; }
             @media (min-width:  1201px){ width: 294px; }
