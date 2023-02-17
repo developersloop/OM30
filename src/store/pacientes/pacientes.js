@@ -2,7 +2,7 @@ const state = {
     count: 0
   }
 
-  const mutations = {}
+const mutations = {}
 const actions = {}
 const getters = {
     count: state => state.data

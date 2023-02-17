@@ -1,4 +1,10 @@
 module.exports = {
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src', 'componentes'),
+      $: "jquery",
+    }
+  },
     module: {
       rules: [
         // ... other rules omitted

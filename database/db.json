@@ -1,19 +1,18 @@
 {
+  "users": [
+    {
+      "id": 1,
+      "name": "vitor",
+      "email": "vi_dualcore@hotmail.com",
+      "password": "@Dualcore1",
+      "token": "8ced33f20b75e0c98959dd0bde38c52e7dbd2cd281932ed36679fb10edfe7c83"
+    }
+  ],
   "posts": [
     {
       "title": "asd",
       "aut": "vitor",
       "id": 1
     }
-  ],
-  "comments": [
-    {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
-    }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }
