@@ -14,10 +14,18 @@ const router = new Router({
         },
         {
             path: '/pacientes',
-            name: 'Pacientes',
+            name: 'pacientes',
             meta: { guard: false },
-            component: () => import('@/pages/pacientes/List.vue')
-        },
+            component: () => import('@/pages/pacientes/List.vue'),
+            children: [
+                {
+                    path: 'cadastro',
+                    name: 'cadastro-pacientes',
+                    meta: { guard: false },
+                    component: () => import('@/pages/pacientes/PatientForm.vue')
+                },
+            ]
+        }
     ]
 })
 

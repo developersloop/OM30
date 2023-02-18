@@ -1,3 +1,5 @@
+import axios from "axios"
+
 export const validate = (value, name) => {
     /* eslint-disable no-useless-escape */
     const regex = name == 'email' 
@@ -25,4 +27,33 @@ export const generateToken = (str, algo = "SHA-256") => {
         }
         return result;
       });
-  }
+
+}
+
+const convertBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+          resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+          reject(error);
+      };
+  });
+};
+
+export const uploadImage = async (event) => {
+  const file = event.target.files[0];
+  const base64 = await convertBase64(file);
+  return new Promise((resolve,reject) => {
+    if(base64) resolve(base64)
+    else reject(base64)
+  })
+};
+
+export const viaCep = (cep) => {
+  return axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+}
