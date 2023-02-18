@@ -10,13 +10,13 @@ const router = new Router({
         {
             path: '/',
             name: 'Login',
-            component: () => import('@/components/login/Login.vue')
+            component: () => import('@/pages/login/Login.vue')
         },
         {
             path: '/pacientes',
             name: 'Pacientes',
-            meta: { guard: true },
-            component: () => import('@/components/pacientes/List.vue')
+            meta: { guard: false },
+            component: () => import('@/pages/pacientes/List.vue')
         },
     ]
 })
