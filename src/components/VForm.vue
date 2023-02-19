@@ -2,13 +2,14 @@
     <div class="fields">
         <div v-for="(amount, index) in amountFields" :key="index" class="input-field inline">
             <input
-                :id="'input-'+index" 
+                :id="'input-'+amount" 
                 :ref="'input-'+amount" 
                 style="margin-bottom: 0;"
                 v-model="patient[amount]"
                 type="text"
                 v-mask="amount == 'cpf' ? '###.###.###-##' : (amount == 'cep' ? '#####-###' : (amount == 'cns' ? '###.####.####.####' : (amount == 'date' ? '##/##/####' : '')))"
                 class="validate"
+                :disabled="isEdit && (amount == 'cpf' || amount == 'cns') "
                 @input="handler(amount, 'input')"
                 @focusout="handler(amount, 'focus')"
             />
@@ -25,13 +26,24 @@
                     <input class="file-path validate" type="text" placeholder="Insira uma foto.">
                 </div>
             </div>
-            <button  :style="[!invalidForm ? {'opacity': '0.1'} : {}]" class="waves-effect waves-light btn" role="button" @click="cadastrar()">Cadastrar</button>
+            <button  
+                :style="[(invalidPatientEdit || !invalidForm) ? {'opacity': '0.1'} : {}]" 
+                class="waves-effect waves-light btn" 
+                role="button" 
+                @click="submit()"
+            >{{ isEdit ? 'Editar' : 'Cadastrar'}}</button>
         </div>
     </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
-import { uploadImage, validCpf, validaCns, viaCep, defaultAvatar } from '@/utils'
+import { 
+    uploadImage,
+    validCpf, 
+    validaCns, 
+    viaCep, 
+    defaultAvatar 
+} from '@/utils'
 
 export default {
     name: 'VForm',
@@ -42,7 +54,13 @@ export default {
         },
         isFile: {
             type: Boolean
-        }  
+        },
+        paciente: {
+            type: Object
+        },
+        pacientId: {
+            type: [Number, String]
+        }
     },            
     data() {
         return {
@@ -90,14 +108,45 @@ export default {
                     }
                 }
             },
+            isEdit: false
+        }
+    },
+    watch: {
+        paciente: {
+            immediate: true,
+            deep: true,
+            handler(oldValue, value) {
+                if(oldValue) {
+                    this.patient = {...oldValue}
+                    delete this.patient?.avatar
+                    delete this.patient?.id
+
+                    this.isEdit = true
+                    
+                    Object.keys(oldValue).map(key => {
+                        if(this.validRequiredInputsForm[key]?.error) {
+                            this.validRequiredInputsForm[key].error.invalid = false
+                        }
+                    })
+                }
+
+            }
         }
     },
     mounted() {
         this.amountFields = Object.keys(this.patient)
+        if(this.isEdit) {
+            this.$nextTick(() => {
+                Object.keys(this.patient).map(val => {
+                    if(val !== 'avatar') document.getElementById(`label-${val}`).classList.add('active')
+                })
+            })
+        }
     },
     methods: {
         ...mapActions({
-            'storePatient': 'pacientes/storePatient'
+            'storePatient': 'pacientes/storePatient',
+            'updatePatient': 'pacientes/updatePatient'
         }),
         file($event) {
             var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
@@ -171,10 +220,16 @@ export default {
                     })
             }
         },
-        cadastrar() {
+        submit() {
             if(!Object.values(this.validRequiredInputsForm).every(fill => !fill.error.invalid)) return
             else {
                 if (!this.patient?.avatar) this.patient.avatar = defaultAvatar()
+                
+                if(this.isEdit) {
+                    this.updatePatient({ id: this.pacientId, payload: this.patient }).then(_ => this.$emit('rerender'))
+                    return
+                }
+                
                 this.storePatient(this.patient).then(_ => this.$emit('rerender'))
             } 
         }
@@ -182,6 +237,9 @@ export default {
     computed: {
         fieldsApplyValidation: function() {
             return Object.keys(this.validRequiredInputsForm)
+        },
+        invalidPatientEdit: function() {
+            return this.isEdit && !Object.keys(this.validRequiredInputsForm).every(k => this.paciente[k])
         },
         invalidForm: function() {
             return Object.values(this.validRequiredInputsForm).every(fill => !fill.error.invalid)

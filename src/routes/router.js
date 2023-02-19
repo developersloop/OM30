@@ -24,6 +24,12 @@ const router = new Router({
                     meta: { guard: false },
                     component: () => import('@/pages/pacientes/PatientForm.vue')
                 },
+                {
+                    path: ':id',
+                    name: 'edita-pacientes',
+                    meta: { guard: false },
+                    component: () => import('@/pages/pacientes/PatientForm.vue')
+                },
             ]
         }
     ]

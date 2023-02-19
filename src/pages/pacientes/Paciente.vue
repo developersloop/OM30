@@ -7,7 +7,7 @@
             </div>
             <span class="cns-label">{{ patient.cns }}</span>
             <div class="icons-actions_paciente -opacity">
-                <i class="sm material-icons">create</i>&nbsp;&nbsp;
+                <i class="sm material-icons" @click="edit(patient?.id)">create</i>&nbsp;&nbsp;
                 <i class="sm material-icons" @click="deleted(patient?.id)">delete</i>
             </div>
         </div>
@@ -47,9 +47,11 @@ export default {
         ...mapActions({
             deletePatient: 'pacientes/deletePatient'
         }),
-
         deleted(id) {
             this.deletePatient(id).finally(_ => this.rerender = true)
+        },
+        edit(id) {
+            this.$router.push({ name: 'edita-pacientes', params: { id, }})
         }
     },
     computed: {
@@ -57,7 +59,7 @@ export default {
             'patients': 'pacientes/patients'
         }),
         formatName: function() {
-            return this.patient.name.split(' ').slice(0, 1).join(' ');
+            return this.patient.name?.split(' ').slice(0, 1).join(' ');
         }
     },
 }

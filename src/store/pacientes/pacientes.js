@@ -25,6 +25,20 @@ const actions = {
                 })
         })
     },
+    updatePatient(context = null, { id, payload}) {
+        return new Promise((resolve,reject) => {
+            $http(`patients/${id}`, 'PUT').request({
+                data: payload
+            })
+                .then(resp => {
+                    if(resp) {
+                        console.log(resp)
+                        resolve(resp)
+                    }
+                    else reject(resp)
+                })
+        })
+    },
     listPatients(context, search) {
         const url = search 
             ? `patients${search}`

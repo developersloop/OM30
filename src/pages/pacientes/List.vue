@@ -20,7 +20,11 @@
             />
             <div v-show="!patients.length" class="no_pacientes">Não há pacientes cadastrados.</div>
         </div>
-        <router-view @destroyed="isOpenForm = false" @rerender="rerender()"></router-view>
+        <router-view 
+            @destroy="isOpenForm = false" 
+            @rerender="rerender()" 
+            @isForm="isOpenForm = true"
+        ></router-view>
     </div>
 </template>
 
@@ -44,7 +48,8 @@ export default {
     },
     mounted() {
         this.listPatients()
-        if (this.$route?.name === 'cadastro-pacientes') this.isOpenForm = true
+        if (['cadastro-pacientes','edita-pacientes'].includes(this.$route?.name)) this.isOpenForm = true
+        
     },
     computed: {
         ...mapGetters({
