@@ -31,7 +31,7 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
-import { uploadImage, validCpf, validaCns, viaCep } from '@/utils'
+import { uploadImage, validCpf, validaCns, viaCep, defaultAvatar } from '@/utils'
 
 export default {
     name: 'VForm',
@@ -43,7 +43,7 @@ export default {
         isFile: {
             type: Boolean
         }  
-    },
+    },            
     data() {
         return {
             patient: {...this.format},
@@ -174,8 +174,8 @@ export default {
         cadastrar() {
             if(!Object.values(this.validRequiredInputsForm).every(fill => !fill.error.invalid)) return
             else {
-                this.storePatient(this.patient)
-                    .then(_ => this.$emit('rerender'))
+                if (!this.patient?.avatar) this.patient.avatar = defaultAvatar()
+                this.storePatient(this.patient).then(_ => this.$emit('rerender'))
             } 
         }
     },

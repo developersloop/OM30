@@ -2,7 +2,7 @@
     <div v-if="!rerender">
         <div class="thread-paciente">
             <div class="avatar-paciente">
-                <div class="profile"></div>
+                <div class="profile" :style="[patient?.avatar ? { 'background': `url(${patient.avatar})`, 'background-size': 'cover' } : {} ]"></div>
                 <div class="alt">{{ formatName }}</div>
             </div>
             <span class="cns-label">{{ patient.cns }}</span>
@@ -80,7 +80,6 @@ export default {
             width: 55px;
             height: 55px;
             border-radius: 100px;
-            background: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8PDQ0NDQ8NDQ0OEA0NDQ0NDQ8ODQ4QFREWFhcRFhMYHSggGBolGxMVITEhJSkrLi4uFx8zODMsNygtLjcBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAOEA4QMBIgACEQEDEQH/xAAaAAEBAQEBAQEAAAAAAAAAAAAAAQQFAwIH/8QALxABAAECBAQFAwMFAAAAAAAAAAECAwQRITESQVFxIjJhgdFCkaGCscEFFDNikv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD9TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEUAAAAAAAAAEBR5VX6I+qPbV8Ti6PX7A0DP8A3dHr9n3TiKJ+qPfQHqJE9NeygAAAAAAAAAAAACKAAAAAAA+a64pjOZyh5378U6b1dPlgrrmqc5nOQaLmMnamMvWd/szVVzO8zPdAAAAAFpqmNpmOzRbxkx5vFHXaWYB1LdyKozifmH25NNUxOcTlLdh8TFWk6VfiQaAAAAAAAAAAAAAAAAHjib3DGnmnb5eldcUxMztDl3K5qmZnmCTOes6yAAAAAAAAAAADdhb/ABeGfNH5aXIicpiY3h07Nzipifv6SD0AAAAABFRQAAAAASZBjx1zWKY5az3ZVrqzmZ6zmgAAAAAAAAAAAAD3wdzKrLlVp7vAB1x826s4iesZvoAAAAEVFAAAAAeWJqyoq7Zfd6s+Nnwe8A56gAAAAAAAAAAAAAADfgqs6O0zDQyf0+dKu8NYAAAAIqKAAAAAz47ye8NDxxUZ0VfcHOEUAAAAAAAAAAAAAAGz+n7Vd4a2bAx4M+sy0gAAAAigAAAAAkxnEx10UByKoymYnlOQ0Y23lVxcp37s4AAAAAAAAAAAAAPXC2+KuOkayDfapypiOkPsAAAAARQAAAAAAB8XbcVUzE+3pLmVUzEzE7w6zNirHF4o80fmAYQAAAAAAAAAAAHSw9rhpy5zrLxwlj66v0x/LWAAAAAACKigAAAAAAAAzYnDcXip0q59JYZjLSdJdK5fpp3nOekayx37/F9MR68weIAAAAAAADZh8L9VftT8s9i7wznlE+vNtt4mmrnlPSQewAAAAAAAIqKAAAAADLiMVlpTrPOeUA9rt6mnfflEbsV3E1Vf6x0j5eMznrOs9QEUAAAAAAAAAAAelq/VTtOcdJbbOIpq9J6S5wDrjFYxXKv/AK+WwFAAAAEUAAAGLF3/AKKf1T/AJicTn4aduc9WYABAFEAUQBQAAAAAAAAAHvhsRw6TrT+zwAdaJz1jZXPwt/hnhnyz+HQAAAEUAEqqyiZnaAeOKvcMZR5p/Hq576uVzVM1Tz/EPkAAEAAAAAAAAAAAAAAAAABW3B3s44Z3jb1hiKZymJjeNQdcfFqvipiY5/u+wAAGTHXNqY56y1uVdr4qpnrOnYHyAAACAAAAAAAQAAAAAEgAAAQAoANOCuZTNPXWO7c5FM5TExvGrq01ZxExz1B9AA+bnlntLkwoAAAACAAAAAAAAAAAAAAAAAAoADpYX/HT2AHqAD//2Q==");
             background-size: cover;
     
             @media (max-width: 600px) { 

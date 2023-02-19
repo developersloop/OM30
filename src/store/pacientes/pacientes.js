@@ -25,9 +25,13 @@ const actions = {
                 })
         })
     },
-    listPatients(context) {
+    listPatients(context, search) {
+        const url = search 
+            ? `patients${search}`
+            : 'patients'
+
         return new Promise((resolve,reject) => {
-            $http('patients').get()
+            $http(url).get()
                 .then(resp => {
                     if(resp) {
                         context.commit('CREATE_PATIENT', resp.data)

@@ -25,8 +25,9 @@
 </template>
 
 <script>
-import VDivider from '@/components/VDivider.vue';
 import { mapActions, mapGetters } from 'vuex';
+import debounce from 'debounce'
+import VDivider from '@/components/VDivider.vue';
 import Paciente from './Paciente.vue';
 
 export default {
@@ -54,9 +55,17 @@ export default {
         ...mapActions({
             listPatients: 'pacientes/listPatients'
         }),
-        fetchPatient: function(event) {
-            const searched = event.target.value
-        },
+        
+        fetchPatient: debounce(function($event){
+            const target = $event.target.value
+            const search = isNaN(target)
+                ? `?name_like=${target}`
+                : `?cns_like=${target}`
+        
+            this.listPatients(search)
+        
+        }, 100),
+
         openForm() {
             this.isOpenForm = true
             this.$router.push({ name: 'cadastro-pacientes'})
