@@ -15,19 +15,19 @@ const router = new Router({
         {
             path: '/pacientes',
             name: 'pacientes',
-            meta: { guard: false },
+            meta: { guard: true },
             component: () => import('@/pages/pacientes/List.vue'),
             children: [
                 {
                     path: 'cadastro',
                     name: 'cadastro-pacientes',
-                    meta: { guard: false },
+                    meta: { guard: true },
                     component: () => import('@/pages/pacientes/PatientForm.vue')
                 },
                 {
                     path: ':id',
                     name: 'edita-pacientes',
-                    meta: { guard: false },
+                    meta: { guard: true },
                     component: () => import('@/pages/pacientes/PatientForm.vue')
                 },
             ]
