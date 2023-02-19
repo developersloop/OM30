@@ -1,6 +1,6 @@
 <template>
     <div class="form-patient">
-        <v-form :format="format" :isFile="true"></v-form>
+        <v-form :format="format" :isFile="true" @rerender="$emit('rerender')"></v-form>
     </div>
 </template>
 <script>
@@ -28,7 +28,6 @@ export default {
         }
     },
     destroyed() {
-        console.log(this)
         this.$emit('destroyed')
     },
 }

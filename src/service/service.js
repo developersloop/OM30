@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-export const $http = (type) => {
-  return axios.create({
-    baseURL: `http://localhost:3000/${type}`
-  })
+export const $http = (type, method = null) => {
+  const configureDefault = { baseURL: `http://localhost:3000/${type}` }
+
+  if(method) configureDefault.method = method
+  
+  return axios.create(configureDefault)
 }

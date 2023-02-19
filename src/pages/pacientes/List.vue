@@ -20,7 +20,7 @@
             />
             <div v-show="!patients.length" class="no_pacientes">Não há pacientes cadastrados.</div>
         </div>
-        <router-view @destroyed="isOpenForm = false"></router-view>
+        <router-view @destroyed="isOpenForm = false" @rerender="rerender()"></router-view>
     </div>
 </template>
 
@@ -60,6 +60,10 @@ export default {
         openForm() {
             this.isOpenForm = true
             this.$router.push({ name: 'cadastro-pacientes'})
+        },
+        rerender() {
+            this.listPatients()
+            .finally(_ => this.$router.push({ name: 'pacientes'}))
         }
     }
 }

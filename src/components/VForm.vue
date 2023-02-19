@@ -3,14 +3,16 @@
         <div v-for="(amount, index) in amountFields" :key="index" class="input-field inline">
             <input
                 :id="'input-'+index" 
+                :ref="'input-'+amount" 
                 style="margin-bottom: 0;"
                 v-model="patient[amount]"
                 type="text"
+                v-mask="amount == 'cpf' ? '###.###.###-##' : (amount == 'cep' ? '#####-###' : (amount == 'cns' ? '###.####.####.####' : (amount == 'date' ? '##/##/####' : '')))"
                 class="validate"
-                @input="handler(amount)"
-                @focusout="handler(amount)"
+                @input="handler(amount, 'input')"
+                @focusout="handler(amount, 'focus')"
             />
-            <label :for="'input-'+index">Digite {{ amount == 'name_mom' ? 'o nome da mãe' : (amount == 'date' ? 'sua data de nascimento' : (amount == 'uf' ? 'o estado' : `o ${amount}`)) }}</label>
+            <label :id="'label-'+amount" :for="'input-'+index">Digite {{ amount == 'name_mom' ? 'o nome da mãe' : (amount == 'date' ? 'sua data de nascimento' : (amount == 'uf' ? 'o estado' : `o ${amount}`)) }}</label>
             <span style="color: red" v-if="(fieldsApplyValidation.includes(amount) && validRequiredInputsForm[amount]?.error?.invalid)">{{ validRequiredInputsForm[amount]?.error?.message }}</span>
         </div>
         <div class="submit-file">
@@ -23,12 +25,13 @@
                     <input class="file-path validate" type="text" placeholder="Insira uma foto.">
                 </div>
             </div>
-            <button  :style="[!invalidForm ? {'opacity': '1'} : {}]" class="waves-effect waves-light btn" role="button" @click="cadastrar()">Cadastrar</button>
+            <button  :style="[!invalidForm ? {'opacity': '0.1'} : {}]" class="waves-effect waves-light btn" role="button" @click="cadastrar()">Cadastrar</button>
         </div>
     </div>
 </template>
 <script>
-import { uploadImage } from '@/utils'
+import { mapActions } from 'vuex'
+import { uploadImage, validCpf, validaCns, viaCep } from '@/utils'
 
 export default {
     name: 'VForm',
@@ -93,6 +96,9 @@ export default {
         this.amountFields = Object.keys(this.patient)
     },
     methods: {
+        ...mapActions({
+            'storePatient': 'pacientes/storePatient'
+        }),
         file($event) {
             var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
              
@@ -103,24 +109,74 @@ export default {
             }
             else uploadImage($event).then(image => this.patient.avatar = image)
         },
-        handler(amount) {
+        cleanValidation: function(amount) {
+            this.validRequiredInputsForm[amount].error.invalid = false
+            this.validRequiredInputsForm[amount].error.message = ''
+        },
+        handler(amount, nameEvent) {
             if(Object.keys(this.validRequiredInputsForm).includes(amount)) {
                 if(!this.patient[amount]) {
                     this.validRequiredInputsForm[amount].touched = true
                     this.validRequiredInputsForm[amount].error.invalid = true
                     this.validRequiredInputsForm[amount].error.message = 'Campo é requirido'
                 }
-                else {
-                    this.validRequiredInputsForm[amount].error.invalid = false
-                    this.validRequiredInputsForm[amount].error.message = ''
+                else this.cleanValidation(amount)
+            }
+            
+            if(amount == 'cpf' && nameEvent == 'focus' && this.patient[amount]) {
+                const cleanCpf = this.patient[amount].replace(/[^0-9]/g, '')
+
+                if(!validCpf(cleanCpf)) {
+                    this.validRequiredInputsForm[amount].error.invalid = true
+                    this.validRequiredInputsForm[amount].error.message = 'Insira um cpf válido'
                 }
+                else this.cleanValidation(amount)
+            }
+            
+            if(amount == 'cns' && nameEvent == 'focus' && this.patient[amount]) {
+                const cleanCns = this.patient[amount].replace(/[^0-9]/g, '')
+                if(!validaCns(cleanCns)) {
+                    this.validRequiredInputsForm[amount].error.invalid = true
+                    this.validRequiredInputsForm[amount].error.message = 'Insira um cns válido'
+                }
+                else this.cleanValidation(amount)
             }
 
-            
+            if(amount == 'cep' && nameEvent == 'focus' && this.patient[amount]) {
+                const cleanCep = this.patient[amount].replace(/[^0-9]/g, '')
+                viaCep(cleanCep)
+                    .then(({ data }) => {
+                        if(data?.erro) {
+                            this.validRequiredInputsForm[amount].error.invalid = true
+                            this.validRequiredInputsForm[amount].error.message = 'Insira um cep válido'
+                        }
+                        else {    
+                            this.patient.logradouro = data?.logradouro
+                            this.patient.complemento = data?.complemento
+                            this.patient.bairro = data?.bairro
+                            this.patient.localidade = data?.localidade
+                            this.patient.uf = data?.uf
+
+                            document.getElementById('label-bairro').classList.add('active')
+                            document.getElementById('label-logradouro').classList.add('active')
+                            document.getElementById('label-complemento').classList.add('active')
+                            document.getElementById('label-localidade').classList.add('active')
+                            document.getElementById('label-uf').classList.add('active')
+                            document.getElementById('label-bairro').classList.add('active')
+                        }
+                    })
+                    .catch(_ => {
+                        this.validRequiredInputsForm[amount].invalid = true
+                        this.validRequiredInputsForm[amount].error.message = 'Insira um cep válido'
+                    })
+            }
         },
         cadastrar() {
             if(!Object.values(this.validRequiredInputsForm).every(fill => !fill.error.invalid)) return
-            else alert('adad')   
+            else {
+                this.storePatient(this.patient)
+                    .then(_ => this.$emit('rerender'))
+            } 
         }
     },
     computed: {
@@ -142,7 +198,6 @@ export default {
             width: 300px;
             margin: 20px;
         }
-
     }
 
     >.submit-file{
